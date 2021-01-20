@@ -1,4 +1,3 @@
-# from django.shortcuts import render
 # from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,7 +6,7 @@ from rest_framework import status
 from .serializers import PostSerializer, PostListSerializer, CommentListSerializer
 
 # from django.http import HttpResponse
-from .models import Post
+from .models import Post, Comment
 
  
 # class PostViewSet(viewsets.ModelViewSet):
@@ -46,28 +45,20 @@ class PostListView(APIView):
 
     def get(self, request, format=None):
         posts = Post.objects.all()
-        # res_posts = [
-        #     {'id': post.id, 'title': post.title, 'body': post.body}
-        #     for post in posts
-        # ]
         res_post = PostListSerializer(posts, many=True)
-        print(res_post.data)
         return Response(res_post.data)
 
 class PostDetailView(APIView):
     
     def get(self, request, pk=None, format=None):
         post = Post.objects.get(id=pk)
-        comments = post.comment_set.all()
-        res_comment = CommentListSerializer(comments, many=True)
-        # print(res_comment.data)
-
-        # res_post = {
-        #     'id': post.id,
-        #     'title': post.title,
-        #     'body': post.body,
-        # }
         res_post = PostListSerializer(post)
-        print(dict(res_post.data, **{'comment': res_comment.data}))
 
-        return Response(dict(res_post.data, **{'comment': res_comment.data}))
+        return Response(res_post.data)
+
+class CommentListView(APIView):
+     def get(self, request, pk=None, format=None):
+        comments = Post.objects.get(id=pk).comment_set.all()
+        res_comment = CommentListSerializer(comments, many=True)
+
+        return Response(res_comment.data)

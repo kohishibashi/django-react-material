@@ -22,4 +22,6 @@ class AccountSerializer(serializers.Serializer):
 class CommentListSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     body = serializers.CharField(max_length=255)
-    account = AccountSerializer()
+    # account = AccountSerializer()
+    account_name = serializers.ReadOnlyField(source='account.name', read_only=True)
+    account_mail = serializers.ReadOnlyField(source='account.mail', read_only=True)
